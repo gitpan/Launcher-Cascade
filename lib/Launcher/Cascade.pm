@@ -2,16 +2,48 @@ package Launcher::Cascade;
 
 =head1 NAME
 
-Launcher::Cascade - a base class for Launcher::Cascade::*
+Launcher::Cascade - a framework for launching processes that depend on one another
 
 =head1 SYNOPSIS
 
-    use base qw( Launcher::Cascade );
+    use Launcher::Cascade::Simple;
+    use Launcher::Cascade::Container;
 
-    Launcher::Cascade::make_accessor qw( first_name last_name );
-    Launcher::Cascade::make_accessors_with_defaults(age => 18);
+    my $launcher1 = Launcher::Cascade::Simple->new(
+        -launch_hook  => sub { ... },    # what to do to launch
+        -test_hook    => sub { ... },    # what to do to test that it succeeded
+        );
+    my $launcher2 = Launcher::Cascade::Simple->new(
+        -launch_hook  => sub { ... },    # what to do to launch
+        -test_hook    => sub { ... },    # what to do to test that it succeeded
+        -dependencies => [ $launcher1 ], # second launcher depends on success of first
+    );
+
+    my $container = new Launcher::Cascade::Container
+	-launchers => [ $launcher1, $launcher2 ];
+
+    $container->run_session();
 
 =head1 DESCRIPTION
+
+This module provides a framework to launch processes, test whether they
+succeeded or not and report on that. Each process is modeled as an object and
+can depend on other processes to start, i.e., a process will not be started
+until all the processes it depends upon have successfully been started.
+
+Process launchers must be implemented as C<Launcher::Cascade::Base> objects (or
+subclassses thereof). Their launch() method will actually launch the process,
+and their test() method will check whether it succeeded or not. Each launcher
+can be made to depend on one or more other launchers: it will then refuse to
+launch() until the others have been test()ed successfully.
+
+All the launchers should be given to a C<Launcher::Cascade::Container>, which will
+run them in turn and test their status when applicable, until either all of the
+Launchers have succeeded or one of them has failed.
+
+The distribution provides C<Launcher::Cascade::FileReader> to ease the launching
+of external (and possibly remote, by means of ssh) commands and the reading of
+files. FileReaders should be used in launch() or test() methods of Launchers.
 
 This base class provides a constructor for its subclasses that accepts named
 arguments, as well as function to easily create attributes and their accessors.
@@ -184,11 +216,11 @@ sub make_accessors_with_defaults {
 
 =head1 VERSION
 
-0.01
+0.02
 
 =cut
 
-our $VERSION = 0.01;
+our $VERSION = 0.02;
 
 =head1 SEE ALSO
 

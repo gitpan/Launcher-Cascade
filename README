@@ -13,7 +13,7 @@ launch() until the others have been test()ed successfully.
 
 All the launchers should be given to a Launcher::Cascade::Container, which will
 run them in turn and test their status when applicable, until either all of the
-C<aunchers have succeeded or one of them has failed.
+Launchers have succeeded or one of them has failed.
 
 The distribution provides Launcher::Cascade::FileReader to ease the launching
 of external (and possibly remote, by means of ssh) commands and the reading of

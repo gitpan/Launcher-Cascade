@@ -1,9 +1,9 @@
 ---
 name: Launcher-Cascade
-version: 0.01
+version: 0.02
 author:
   - Cédric Bouvier <cbouvi@cpan.org>
-abstract: a base class for Launcher::Cascade::*
+abstract: a framework for launching processes that depend on one another
 license: perl
 build_requires:
   Log::Log4perl: 0
@@ -11,7 +11,7 @@ build_requires:
 provides:
   Launcher::Cascade:
     file: lib/Launcher/Cascade.pm
-    version: 0.01
+    version: 0.02
   Launcher::Cascade::Base:
     file: lib/Launcher/Cascade/Base.pm
   Launcher::Cascade::Container:
